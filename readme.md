@@ -1,0 +1,1 @@
+Projeto que simula um cenário de centealização de demandas de um setor de infraestrutura em um único dashboard para gestão do cumprimento de prazos e requisitos.
