@@ -1,8 +1,13 @@
+#%%
 import pandas as pd
+import requests
+import os
 from pathlib import Path
+from io import BytesIO
+from dotenv import load_dotenv
+load_dotenv()
 
-BASE = Path().absolute()
-input_dir = BASE / "mock_data/output"
+url = os.getenv("LINK_CALL")
+resp = requests.get(url)
 
-print("definindo df_call...")
-df_call = pd.read_excel(input_dir / "call_chamados.xlsx")
+df_call = pd.read_excel(BytesIO(resp.content))

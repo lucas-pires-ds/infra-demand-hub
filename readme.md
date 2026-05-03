@@ -17,7 +17,7 @@ Pipeline de dados automatizado que extrai, transforma e consolida as quatro font
 ## Arquitetura
 
 ```
-[Qualiteam]     [Planner/Teams]     [E-mail]     [Call/Telefone]
+[Qualyteam]     [Planner/Teams]     [E-mail]     [Call/Telefone]
    API REST          CSV               .eml            XLSX
       |                |                 |                |
       └────────────────┴─────────────────┴────────────────┘
@@ -40,7 +40,7 @@ Pipeline de dados automatizado que extrai, transforma e consolida as quatro font
 
 | Fonte | Sistema | Formato | Hospedagem |
 |---|---|---|---|
-| Qualiteam | Sistema de gestão de qualidade | JSON via API REST | FastAPI no Render |
+| Qualyteam | Sistema de gestão de qualidade | JSON via API REST | FastAPI no Render |
 | Planner | Microsoft Teams / Planner | CSV exportado | Google Drive |
 | E-mail | Caixa de entrada do setor | Arquivos `.eml` | Pasta local / simulada |
 | Call | Registro telefônico manual | Excel `.xlsx` | Google Drive |
@@ -56,19 +56,19 @@ infra-demand-hub/
 ├── .github/
 │   └── workflows/
 │       └── etl_pipeline.yml        # scheduler GitHub Actions (cron horário)
-├── api_qualiteam/
+├── api_qualyteam/
 │   ├── main.py                     # FastAPI — endpoint /demandas
 │   ├── requirements.txt
-│   └── qualiteam_demandas.json     # dados servidos pela API
+│   └──qualyteam_demandas.json     # dados servidos pela API
 ├── mock_data/
 │   ├── generate_all.py             # gerador de todos os dados fictícios
 │   └── output/
-│       ├── qualiteam_demandas.json
+│       ├── qualyteam_demandas.json
 │       ├── planner_tarefas.csv
 │       ├── call_chamados.xlsx
 │       └── emails_eml/             # 20 arquivos .eml
 ├── sources/
-│   ├── source_qualiteam.py         # consome a API REST
+│   ├── source_qualyteam.py         # consome a API REST
 │   ├── source_planner.py           # lê o CSV do Google Drive
 │   ├── source_email.py             # faz parse dos arquivos .eml
 │   └── source_call.py              # lê o XLSX
@@ -103,7 +103,7 @@ Crie um arquivo `.env` na raiz do projeto:
 ```env
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_KEY=your_anon_key
-API_QUALITEAM_URL=https://sua-api.onrender.com
+API_QUALYTEAM_URL=https://sua-api.onrender.com
 PLANNER_CSV_URL=https://drive.google.com/uc?id=SEU_FILE_ID
 CALL_XLSX_URL=https://drive.google.com/uc?id=SEU_FILE_ID
 EMAIL_DIR=./mock_data/output/emails_eml
@@ -118,9 +118,9 @@ pip install -r requirements.txt
 ### 3. Subir a API no Render
 
 1. Faça fork ou push do projeto no GitHub
-2. No Render, crie um novo **Web Service** apontando para a pasta `api_qualiteam/`
+2. No Render, crie um novo **Web Service** apontando para a pasta `api_qualyteam/`
 3. Start command: `uvicorn main:app --host 0.0.0.0 --port 10000`
-4. Copie a URL gerada e cole em `API_QUALITEAM_URL` no `.env`
+4. Copie a URL gerada e cole em `API_QUALYTEAM_URL` no `.env`
 
 ### 4. Configurar os Secrets no GitHub
 
@@ -128,7 +128,7 @@ No repositório, vá em **Settings → Secrets and variables → Actions** e adi
 
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
-- `API_QUALITEAM_URL`
+- `API_QUALYTEAM_URL`
 - `PLANNER_CSV_URL`
 - `CALL_XLSX_URL`
 

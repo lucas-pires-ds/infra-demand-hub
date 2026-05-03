@@ -1,8 +1,13 @@
+#%%
+import requests
 import pandas as pd
-from pathlib import Path
+import os
+from io import StringIO
+from dotenv import load_dotenv
+load_dotenv()
 
-BASE = Path().absolute()
-input_dir = BASE / "mock_data/output"
+url = os.getenv("LINK_PLANNER")
 
-print("definindo df_planner...")
-df_planner = pd.read_csv(input_dir / "planner_tarefas.csv")
+resp = requests.get(url)
+df_planner = pd.read_csv(StringIO(resp.text))
+

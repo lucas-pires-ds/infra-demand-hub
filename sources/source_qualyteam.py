@@ -1,8 +1,12 @@
+#%%
 import pandas as pd
-from pathlib import Path
+import os
+import requests
+from dotenv import load_dotenv
+load_dotenv()
 
-BASE = Path().absolute()
-input_dir = BASE / "mock_data/output"
 
-print("definindo df_qualyteam...")
-df_qualyteam = pd.read_json(input_dir / "qualyteam_demandas.json")
+url = os.getenv("LINK_QUALYTEAM")
+resp = requests.get(url).json()
+
+df_qualyteam = pd.DataFrame(resp)
