@@ -1,7 +1,7 @@
 """
 generate_all.py
 Gera dados fictícios para o projeto infra-demand-hub.
-Fontes: API (Qualiteam), CSV (Planner), EML (E-mail), XLSX (Call)
+Fontes: API (qualyteam), CSV (Planner), EML (E-mail), XLSX (Call)
 """
 
 import csv
@@ -324,11 +324,11 @@ def data_conclusao(status, abertura, prazo):
 
 
 # ══════════════════════════════════════════════════════════════
-# FONTE 1 — Qualiteam (JSON via API)
+# FONTE 1 — qualyteam (JSON via API)
 # ══════════════════════════════════════════════════════════════
 
-def gerar_qualiteam():
-    """30 registros no formato do sistema Qualiteam."""
+def gerar_qualyteam():
+    """30 registros no formato do sistema qualyteam."""
     registros = []
     pool = random.sample(DEMANDAS_POOL, min(30, len(DEMANDAS_POOL)))
     while len(pool) < 30:
@@ -659,10 +659,10 @@ if __name__ == "__main__":
 
     print("\n🏗️  Gerando dados fictícios — infra-demand-hub\n")
 
-    # 1. Qualiteam JSON
-    print("📡 [1/4] Qualiteam (JSON para API)...")
-    qt_data = gerar_qualiteam()
-    qt_path = os.path.join(output, "qualiteam_demandas.json")
+    # 1. qualyteam JSON
+    print("📡 [1/4] qualyteam (JSON para API)...")
+    qt_data = gerar_qualyteam()
+    qt_path = os.path.join(output, "qualyteam_demandas.json")
     with open(qt_path, "w", encoding="utf-8") as f:
         json.dump(qt_data, f, ensure_ascii=False, indent=2)
     print(f"  ✓ JSON salvo em {qt_path} ({len(qt_data)} registros)")

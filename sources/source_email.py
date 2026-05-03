@@ -1,5 +1,3 @@
-# Fontes: API (Qualiteam), CSV (Planner), EML (E-mail), XLSX (Call)
-
 #%%
 import pandas as pd
 from pathlib import Path
@@ -11,10 +9,9 @@ input_dir = BASE / "mock_data/output"
 
 pd.set_option('display.max_colwidth', None)
 
-#%%
-# extract
 
 emails_dir = Path(input_dir / "emails_eml")
+
 
 MAPA_CATEGORIAS_ITEM = {
     "câmera 14": "CFTV",
@@ -76,7 +73,7 @@ MAPA_DEPARTAMENTOS = {
 
 
 
-MAPA_REGRAS_CRITICIDADE = {
+MAPA_REGRAS_PRIORIDADE = {
     "IMEDIATA": "Crítica",
     "Urgente": "Crítica",
     "acidente grave": "Crítica",
@@ -119,8 +116,10 @@ for i, caminho_email in enumerate(emails_dir.iterdir()):
         "local" : None,
         "item" : None,
         "departamento" : None,
-        "criticidade" : None,
-        "assunto" : msg["Subject"]
+        "prioridade" : None,
+        "assunto" : msg["Subject"],
+        "responsavel" : "nao atribuido",
+        "status" : "aberto"
         }
 
     for part in msg.walk():
@@ -143,22 +142,15 @@ for i, caminho_email in enumerate(emails_dir.iterdir()):
                     dados_extraidos["local"] = MAPA_LOCAIS[local]
                     break
                 
-            for criticidade in MAPA_REGRAS_CRITICIDADE:
-                if criticidade.lower() in texto:
-                    dados_extraidos["criticidade"] = MAPA_REGRAS_CRITICIDADE[criticidade]
+            for prioridade in MAPA_REGRAS_PRIORIDADE:
+                if prioridade.lower() in texto:
+                    dados_extraidos["prioridade"] = MAPA_REGRAS_PRIORIDADE[prioridade]
                     break
                 
             
     registros_emails.append(dados_extraidos)
+    
 
-#%%
 
+print("definindo df_email...")
 df_email = pd.DataFrame(registros_emails)
-df_call = pd.read_excel(input_dir / "call_chamados.xlsx")
-df_planner = pd.read_csv(input_dir / "planner_tarefas.csv")
-df_qualiteam = pd.read_json(input_dir / "qualiteam_demandas.json")
-
-print(df_email.columns)
-print(df_call.columns)
-print(df_planner.columns)
-print(df_qualiteam.columns)
