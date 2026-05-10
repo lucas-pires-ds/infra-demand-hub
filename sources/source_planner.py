@@ -9,5 +9,7 @@ load_dotenv()
 url = os.getenv("LINK_PLANNER")
 
 resp = requests.get(url)
+
+print("Criando df_planner...")
 df_planner = pd.read_csv(StringIO(resp.text))
 

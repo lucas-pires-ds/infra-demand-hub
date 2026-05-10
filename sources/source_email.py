@@ -4,7 +4,11 @@ from pathlib import Path
 from email import policy
 from email.parser import BytesParser
 
-BASE = Path().absolute()
+try:
+    BASE = Path(__file__).resolve().parent.parent
+except NameError:
+    BASE = Path().absolute()
+
 input_dir = BASE / "mock_data/output"
 
 pd.set_option('display.max_colwidth', None)
@@ -152,5 +156,5 @@ for i, caminho_email in enumerate(emails_dir.iterdir()):
     
 
 
-print("definindo df_email...")
+print("Criando df_email...")
 df_email = pd.DataFrame(registros_emails)

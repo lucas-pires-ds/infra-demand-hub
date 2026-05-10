@@ -1,12 +1,15 @@
 #%%
 import pandas as pd
-import os
 import requests
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
-
-url = os.getenv("LINK_QUALYTEAM")
+url = os.getenv("LINK_QUALYTEAM_API")
 resp = requests.get(url).json()
 
-df_qualyteam = pd.DataFrame(resp)
+data = resp["demandas"]
+
+print("Criando df_qualyteam...")
+df_qualyteam = pd.DataFrame(data)
+
