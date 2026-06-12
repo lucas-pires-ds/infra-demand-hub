@@ -5,9 +5,11 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from unidecode import unidecode
+from datetime import datetime
 
 BASE = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE))
+output_path = BASE / "data"
 
 #%%
 print("Importando dataframes:")
@@ -253,7 +255,7 @@ df_email = df_email.rename(columns={
     "departamento":     "setor",
     "assunto":          "descricao",
 })
-df_email.to_csv("df_email.csv")
+df_email.to_csv(output_path / "df_email.csv")
 
 #%% Call
 df_call = df_call.rename(columns={
@@ -275,7 +277,7 @@ df_call["data_conclusao"] = pd.to_datetime(
     errors="coerce",
 )
 df_call["data_abertura"] = pd.to_datetime(df_call["data_abertura"]).dt.strftime("%Y-%m-%d")
-df_call.to_csv("df_call.csv")
+df_call.to_csv(output_path / "df_call.csv")
 
 #%% Planner
 df_planner = df_planner.rename(columns={
@@ -287,7 +289,7 @@ df_planner = df_planner.rename(columns={
     "Atribuído a":    "responsavel",
 })
 df_planner["fonte"] = "Planner"
-df_planner.to_csv("df_planner.csv")
+df_planner.to_csv(output_path / "df_planner.csv")
 
 #%% Qualyteam
 df_qualyteam["data_abertura"] = pd.to_datetime(df_qualyteam["data_abertura"])
@@ -299,7 +301,7 @@ df_qualyteam = df_qualyteam.rename(columns={
     "responsavel_infra": "responsavel",
 })
 df_qualyteam["fonte"] = "Qualyteam"
-df_qualyteam.to_csv("df_qualyteam.csv")
+df_qualyteam.to_csv(output_path / "df_qualyteam.csv")
 
 # =============================================================================
 # CONSOLIDAÇÃO
@@ -355,14 +357,16 @@ df_final["responsavel"] = (
 # =============================================================================
 
 #%%
+hoje = datetime(2025, 4, 20, 10, 0, 0)
+
 condicoes = [
     (df_final["status"] == "Concluído")    & (df_final["data_conclusao"] <= df_final["data_limite"]),
     (df_final["status"] == "Concluído")    & (df_final["data_conclusao"] >  df_final["data_limite"]),
     (df_final["status"] == "Concluído")    & (df_final["data_conclusao"].isna() == True),
-    (df_final["status"] == "Pendente")     & (df_final["data_conclusao"] <= df_final["data_limite"]),
-    (df_final["status"] == "Pendente")     & (df_final["data_conclusao"] >  df_final["data_limite"]),
-    (df_final["status"] == "Em andamento") & (df_final["data_conclusao"] <= df_final["data_limite"]),
-    (df_final["status"] == "Em andamento") & (df_final["data_conclusao"] >  df_final["data_limite"]),
+    (df_final["status"] == "Pendente")     & (hoje <= df_final["data_limite"]),
+    (df_final["status"] == "Pendente")     & (hoje >  df_final["data_limite"]),
+    (df_final["status"] == "Em andamento") & (hoje <= df_final["data_limite"]),
+    (df_final["status"] == "Em andamento") & (hoje >  df_final["data_limite"]),
 ]
 
 status_sla = [
@@ -373,8 +377,25 @@ status_sla = [
 
 df_final["status_SLA"] = np.select(condlist=condicoes, choicelist=status_sla, default=None)
 
+df_final = df_final.sort_values(by="data_abertura").reset_index(drop=True)
+
+df_final["id_chamado"] = df_final.index + 1
+
+df_final = df_final[['id_chamado','data_abertura', 'data_limite', 'data_conclusao', 'solicitante',
+       'setor', 'categoria', 'descricao', 'prioridade', 'responsavel',
+       'status', 'fonte', 'status_SLA']]
+
 print("Disponibilizando tabela transformada em csv...")
 
-df_final.to_csv("demandas_consolidadas.csv", index=False)
+df_final.to_csv(output_path / "demandas_consolidadas.csv", index=False)
 
 print("Tabela consolidada salva com sucesso.")
+
+#%%
+
+df = pd.read_csv("../data/demandas_consolidadas.csv")
+
+df["data_conclusao"] = pd.to_datetime(df["data_conclusao"])
+df["mes"] = df["data_conclusao"].dt.month_name()
+df["dia"] = df["data_conclusao"].dt.day
+df.groupby(["mes", "dia"])["id_chamado"].count()

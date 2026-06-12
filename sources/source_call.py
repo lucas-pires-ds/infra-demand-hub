@@ -2,7 +2,6 @@
 import pandas as pd
 import requests
 import os
-from pathlib import Path
 from io import BytesIO
 from dotenv import load_dotenv
 load_dotenv()

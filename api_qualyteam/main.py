@@ -1,6 +1,6 @@
 """
-main.py — API simulada do Qualyteam
-Porto Central — Infraestrutura Física
+main.py — API simulada do Qualiteam
+Triunfo Logística — Infraestrutura Física
 
 Hospedagem: Render (render.com) — free tier
 Endpoint principal: GET /demandas
@@ -13,8 +13,8 @@ import os
 from typing import Optional
 
 app = FastAPI(
-    title="Qualyteam API — Porto Central (Mock)",
-    description="API simulada do sistema Qualyteam para o projeto BI de Infraestrutura Física.",
+    title="Qualiteam API — Triunfo Logística (Mock)",
+    description="API simulada do sistema Qualiteam para o projeto BI de Infraestrutura Física.",
     version="1.0.0",
 )
 
@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # Carrega o JSON gerado pelo generate_all.py
-DATA_PATH = os.path.join(os.path.dirname(__file__), "qualyteam_demandas.json")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "qualiteam_demandas.json")
 
 def load_data():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
@@ -36,8 +36,8 @@ def load_data():
 @app.get("/")
 def root():
     return {
-        "sistema": "Qualyteam",
-        "empresa": "Porto Central",
+        "sistema": "Qualiteam",
+        "empresa": "Triunfo Logística",
         "versao": "1.0.0",
         "endpoints": ["/demandas", "/demandas/{id_chamado}", "/status"],
     }
@@ -49,7 +49,7 @@ def status():
     return {
         "status": "online",
         "total_chamados": len(data),
-        "sistema": "Qualyteam Mock API",
+        "sistema": "Qualiteam Mock API",
     }
 
 
@@ -60,7 +60,7 @@ def get_demandas(
     categoria: Optional[str] = Query(None, description="Filtrar por categoria"),
 ):
     """
-    Retorna todas as demandas de infraestrutura registradas no Qualyteam.
+    Retorna todas as demandas de infraestrutura registradas no Qualiteam.
     Suporta filtros opcionais por status, prioridade e categoria.
     """
     data = load_data()
@@ -74,7 +74,7 @@ def get_demandas(
 
     return {
         "total": len(data),
-        "fonte": "Qualyteam",
+        "fonte": "Qualiteam",
         "demandas": data,
     }
 
